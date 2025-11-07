@@ -93,5 +93,3 @@ Each service is independent, ensuring better scalability, maintainability, and f
 
 ---
 
-## 🖼️ Frontend Structure (React)
-
