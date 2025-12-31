@@ -3,18 +3,23 @@ package com.example.ProfieService.Controller;
 import com.example.ProfieService.DTO.UserDTO;
 import com.example.ProfieService.Service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * User Controller
+ * Endpoints for user profile management
+ */
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {

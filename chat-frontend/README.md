@@ -1,16 +1,61 @@
-# React + Vite
+# Chat Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React-based frontend for the Real-Time Chat Application.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Install dependencies:
+```bash
+npm install
+```
 
-## React Compiler
+2. Configure environment variables:
+   - Copy `.env.example` to `.env` (if it exists)
+   - Or create `.env` with:
+   ```
+   VITE_API_BASE_URL=http://localhost:8082
+   VITE_WS_URL=http://localhost:8083/ws
+   ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Start development server:
+```bash
+npm run dev
+```
 
-## Expanding the ESLint configuration
+## Environment Variables
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `VITE_API_BASE_URL`: API Gateway URL for REST API calls (default: http://localhost:8082)
+- `VITE_WS_URL`: WebSocket URL for real-time messaging (default: http://localhost:8083/ws)
+
+## Features
+
+- JWT-based authentication
+- Real-time messaging via STOMP WebSocket
+- User list and conversation management
+- Responsive UI with Tailwind CSS
+
+## Build
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+src/
+  ├── features/
+  │   └── chat/
+  │       ├── ChatRoom.jsx      # Conversation view
+  │       ├── login.jsx         # Login form
+  │       ├── Register.jsx      # Registration form
+  │       ├── MessageInput.jsx  # Message input component
+  │       ├── MessageList.jsx   # Message list component
+  │       ├── NavBar.jsx        # Navigation bar
+  │       └── Sidebar.jsx       # User list sidebar
+  ├── services/
+  │   ├── api.js               # Axios API client
+  │   └── websocket.js         # STOMP WebSocket client
+  ├── App.jsx                  # Main app component
+  └── main.jsx                 # Entry point
+```

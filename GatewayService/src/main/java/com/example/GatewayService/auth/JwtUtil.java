@@ -1,29 +1,70 @@
 package com.example.GatewayService.auth;
 
-
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.util.Map;
+import javax.crypto.SecretKey;
 
+/**
+ * JWT Utility for token validation in Gateway
+ * Uses same secret as AuthService for consistency
+ */
 @Component
 public class JwtUtil {
-    private final Key key;
+    private final SecretKey secretKey;
 
-    public JwtUtil(@Value("${ws.jwt.secret}") String secret) {
-        // simple key from secret (for demo). Use proper key management in prod.
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    public JwtUtil(@Value("${jwt.secret:MySuperSecretKeyForJWTTokenGeneration123456789}") String secret) {
+        // Generate key from secret string (must be at least 256 bits for HS256)
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public Jws<Claims> parseToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+    /**
+     * Validate and parse JWT token
+     */
+    public Claims parseToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    public String getUserId(String token) {
-        Jws<Claims> jws = parseToken(token);
-        return String.valueOf(jws.getBody().get("userId"));
+    /**
+     * Extract userId from token
+     */
+    public Long getUserId(String token) {
+        Claims claims = parseToken(token);
+        Object userId = claims.get("userId");
+        if (userId instanceof Integer) {
+            return ((Integer) userId).longValue();
+        } else if (userId instanceof Long) {
+            return (Long) userId;
+        } else if (userId instanceof String) {
+            return Long.parseLong((String) userId);
+        }
+        throw new RuntimeException("Invalid userId in token");
+    }
+
+    /**
+     * Extract username/email from token
+     */
+    public String getUsername(String token) {
+        Claims claims = parseToken(token);
+        return claims.getSubject();
+    }
+
+    /**
+     * Check if token is valid (not expired)
+     */
+    public boolean isTokenValid(String token) {
+        try {
+            Claims claims = parseToken(token);
+            return claims.getExpiration().after(new java.util.Date());
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
